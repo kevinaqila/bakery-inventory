@@ -1,8 +1,6 @@
 # 🍰 Bakery Inventory Management System
 
-A modern, full-stack web application for managing bakery inventory, transactions, and operations. Built with **Laravel 11**, **Vue 3**, **Inertia.js**, and **Tailwind CSS**.
-
-> **Portfolio Project** - Demonstrating professional-grade Laravel and Vue.js development practices
+A modern, full-stack web application for managing bakery inventory, transactions, and operations. Built with **Laravel 12**, **Vue 3**, **Inertia.js**, and **Tailwind CSS**.
 
 ---
 
@@ -59,9 +57,8 @@ A modern, full-stack web application for managing bakery inventory, transactions
 
 ### Tools & DevOps
 - **Vite** - Lightning-fast build tool
-- **Pest PHP** - Modern testing framework
 - **Git** - Version control
-- **Railway/Heroku** - Cloud deployment
+- **Vercel** - Cloud deployment
 
 ---
 
@@ -251,8 +248,8 @@ Test categories:
 
 ### Deploy to Railway (Recommended)
 1. Push to GitHub
-2. Connect GitHub to Railway
-3. Railway auto-detects Laravel
+2. Connect GitHub to Vercel
+3. Vercel auto-detects Laravel
 4. Configure environment variables
 5. Run migrations automatically
 6. App is live! 🚀
@@ -304,31 +301,9 @@ heroku run php artisan migrate
 
 ---
 
-## 🤝 Contributing
-
-This is a portfolio project, but contributions are welcome!
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
----
-
 ## 📄 License
 
 This project is open source and available under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-**Kevin Aqila**
-- GitHub: [@kevinaqila](https://github.com/kevinaqila)
-- Email: your.email@gmail.com
-- Portfolio: [your-portfolio.com](https://your-portfolio.com)
-
 ---
 
 ## 🙏 Acknowledgments
