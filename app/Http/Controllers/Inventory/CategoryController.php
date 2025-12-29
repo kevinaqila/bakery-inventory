@@ -23,7 +23,7 @@ class CategoryController extends Controller
             abort(403, 'Hanya admin yang bisa membuat kategori');
         }
 
-        return Inertia::render('categories/Create');
+        return Inertia::render('Categories/Create');
     }
 
     public function store(Request $request)
@@ -49,7 +49,7 @@ class CategoryController extends Controller
             abort(403, 'Hanya admin yang bisa edit kategori');
         }
 
-        return Inertia::render('categories/Edit', ['category' => $category]);
+        return Inertia::render('Categories/Edit', ['category' => $category]);
     }
 
     public function update(Request $request, Category $category)
