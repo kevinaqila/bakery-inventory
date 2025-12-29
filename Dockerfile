@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN docker-php-ext-install -j$(nproc) \
     pdo \
     pdo_sqlite \
+    && a2dismod mpm_prefork \
+    && a2enmod mpm_prefork \
     && a2enmod rewrite
 
 # Set working directory
@@ -50,13 +52,31 @@ RUN cat > /etc/apache2/sites-available/000-default.conf <<EOF
 </VirtualHost>
 EOF
 
-# Create startup script
+# Create startup script with proper error handling
 RUN cat > /app-start.sh <<'SCRIPT'
 #!/bin/bash
 set -e
 
+# Ensure storage and cache directories are writable
+chmod -R 777 /var/www/html/storage
+chmod -R 777 /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/html
+
+# Create database directory if not exists
+mkdir -p /var/www/html/database
+chmod -R 777 /var/www/html/database
+
+# Create SQLite database file if not exists
+touch /var/www/html/database/app.sqlite
+chmod 666 /var/www/html/database/app.sqlite
+
 # Run migrations
-php artisan migrate --force
+php artisan migrate --force || true
+
+# Clear and optimize cache
+php artisan config:cache || true
+php artisan view:clear || true
+php artisan cache:clear || true
 
 # Start Apache
 apache2-foreground
