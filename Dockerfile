@@ -9,12 +9,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_sqlite \
-    && a2dismod mpm_prefork \
-    && a2enmod mpm_prefork \
-    && a2enmod rewrite
+RUN docker-php-ext-install pdo pdo_sqlite
+
+# Disable all MPM modules first, then enable only mpm_prefork
+RUN a2dismod mpm_event mpm_worker || true
+RUN a2enmod mpm_prefork rewrite
+
+# Set Apache ServerName to suppress warning
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Set working directory
 WORKDIR /var/www/html
@@ -28,79 +30,49 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP dependencies
 RUN composer install --no-dev --no-interaction --no-scripts
 
-# Set permissions - Laravel storage & bootstrap/cache harus writable oleh web server
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
-RUN chmod -R 775 /var/www/html/storage
-RUN chmod -R 775 /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/database
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/database
 
 # Run composer post-install scripts
 RUN composer run-script post-autoload-dump --no-interaction || true
 
-# Remove default Apache configs that might conflict
-RUN rm -f /etc/apache2/sites-enabled/*.conf /etc/apache2/mods-enabled/mpm*.load
+# Configure Apache DocumentRoot to Laravel public folder
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Configure Apache virtual host
-RUN cat > /etc/apache2/sites-available/laravel.conf <<'EOF'
-<VirtualHost *:80>
-    ServerName localhost
-    DocumentRoot /var/www/html/public
+# Enable .htaccess rewrite
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-    <Directory /var/www/html/public>
-        Options -Indexes +FollowSymLinks +MultiViews
-        AllowOverride All
-        Require all granted
-        <IfModule mod_rewrite.c>
-            RewriteEngine On
-            RewriteBase /
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteCond %{REQUEST_FILENAME} !-d
-            RewriteRule ^ index.php [QSA,L]
-        </IfModule>
-    </Directory>
-
-    <Directory /var/www/html>
-        Require all denied
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
-
-# Enable the Laravel site
-RUN a2ensite laravel.conf
-RUN a2dissite 000-default.conf || true
-
-# Create startup script with proper error handling
+# Create startup script
 RUN cat > /app-start.sh <<'SCRIPT'
 #!/bin/bash
 set -e
 
-# Ensure storage and cache directories are writable
+# Ensure directories are writable
 chmod -R 777 /var/www/html/storage
 chmod -R 777 /var/www/html/bootstrap/cache
-chown -R www-data:www-data /var/www/html
-
-# Create database directory if not exists
 mkdir -p /var/www/html/database
 chmod -R 777 /var/www/html/database
 
-# Create SQLite database file if not exists
-touch /var/www/html/database/app.sqlite
-chmod 666 /var/www/html/database/app.sqlite
+# Create SQLite database file
+touch /var/www/html/database/database.sqlite
+chmod 666 /var/www/html/database/database.sqlite
 
 # Run migrations
 php artisan migrate --force || true
 
-# Clear and optimize cache
+# Cache config
 php artisan config:cache || true
 php artisan view:clear || true
 php artisan cache:clear || true
 
-# Start Apache
-apache2-foreground
+# Start Apache in foreground
+exec apache2-foreground
 SCRIPT
 
 RUN chmod +x /app-start.sh
