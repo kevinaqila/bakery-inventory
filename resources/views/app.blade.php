@@ -11,7 +11,6 @@
                 background-color: oklch(1 0 0);
             }
         </style>
-        </style>
 
         <title inertia>{{ config('app.name', 'Manis Legit Bakery') }}</title>
 

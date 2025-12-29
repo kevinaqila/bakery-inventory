@@ -4,6 +4,16 @@ A modern, full-stack web application for managing bakery inventory, transactions
 
 ---
 
+## 👤 Demo Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@bakery.test | password123 |
+| Kasir | kasir@bakery.test | password123 |
+| Karyawan | karyawan@bakery.test | password123 |
+
+---
+
 ## ✨ Features
 
 ### 🔐 **Authentication & Authorization**
@@ -134,16 +144,6 @@ php artisan serve
 ```
 
 Visit: http://localhost:8000
-
----
-
-## 👤 Demo Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@manis-legit.test | password |
-| Kasir | kasir@manis-legit.test | password |
-| Karyawan | karyawan@manis-legit.test | password |
 
 ---
 
