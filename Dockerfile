@@ -26,13 +26,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP dependencies
 RUN composer install --no-dev --no-interaction --no-scripts
 
-# Set permissions
+# Set permissions - Laravel storage & bootstrap/cache harus writable oleh web server
 RUN chown -R www-data:www-data /var/www/html
-
-# Create SQLite database directory and storage
-RUN mkdir -p /var/www/html/database && chmod 775 /var/www/html/database
-RUN mkdir -p /var/www/html/storage/app && chmod 775 /var/www/html/storage/app
-RUN mkdir -p /var/www/html/bootstrap/cache && chmod 775 /var/www/html/bootstrap/cache
+RUN chmod -R 755 /var/www/html
+RUN chmod -R 775 /var/www/html/storage
+RUN chmod -R 775 /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/database
 
 # Run composer post-install scripts
 RUN composer run-script post-autoload-dump --no-interaction || true
