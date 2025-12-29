@@ -24,13 +24,18 @@ COPY . .
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev --no-interaction
+RUN composer install --no-dev --no-interaction --no-scripts
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Create SQLite database directory
+# Create SQLite database directory and storage
 RUN mkdir -p /var/www/html/database && chmod 775 /var/www/html/database
+RUN mkdir -p /var/www/html/storage/app && chmod 775 /var/www/html/storage/app
+RUN mkdir -p /var/www/html/bootstrap/cache && chmod 775 /var/www/html/bootstrap/cache
+
+# Run composer post-install scripts
+RUN composer run-script post-autoload-dump --no-interaction || true
 
 # Configure Apache virtual host
 RUN cat > /etc/apache2/sites-available/000-default.conf <<EOF
