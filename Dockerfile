@@ -74,6 +74,9 @@ fi
 # Run migrations
 php artisan migrate --force || true
 
+# Run seeders
+php artisan db:seed --force || true
+
 # Clear and cache config
 php artisan config:clear || true
 php artisan config:cache || true
