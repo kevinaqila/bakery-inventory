@@ -98,6 +98,16 @@ const clearFilters = () => {
 const hasActiveFilters = computed(() => {
     return search.value || selectedCategory.value;
 });
+
+const getRelativeUrl = (fullUrl: string | null): string => {
+    if (!fullUrl) return '#';
+    try {
+        const url = new URL(fullUrl);
+        return url.pathname + url.search;
+    } catch {
+        return fullUrl;
+    }
+};
 </script>
 
 <template>
@@ -354,8 +364,8 @@ const hasActiveFilters = computed(() => {
                     <Link
                         v-for="(link, index) in products.links"
                         :key="index"
-                        :href="link.url || '#'"
-                        :only="['products']"
+                        :href="getRelativeUrl(link.url)"
+                        preserve-scroll
                         :disabled="!link.url"
                         :class="[
                             'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
