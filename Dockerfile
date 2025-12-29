@@ -53,7 +53,10 @@ RUN cat > /app-start.sh <<'SCRIPT'
 #!/bin/bash
 set -e
 
-# Ensure directories are writable
+# Ensure directories exist and are writable
+mkdir -p /var/www/html/storage/framework/{sessions,views,cache}
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/storage/app/public
 chmod -R 777 /var/www/html/storage
 chmod -R 777 /var/www/html/bootstrap/cache
 mkdir -p /var/www/html/database
@@ -63,13 +66,23 @@ chmod -R 777 /var/www/html/database
 touch /var/www/html/database/database.sqlite
 chmod 666 /var/www/html/database/database.sqlite
 
+# Create .env if it doesn't exist (use environment variables)
+if [ ! -f /var/www/html/.env ]; then
+    cp /var/www/html/.env.example /var/www/html/.env || true
+fi
+
 # Run migrations
 php artisan migrate --force || true
 
-# Cache config
+# Clear and cache config
+php artisan config:clear || true
 php artisan config:cache || true
+php artisan route:clear || true
 php artisan view:clear || true
 php artisan cache:clear || true
+
+# Create storage link
+php artisan storage:link || true
 
 # Start Apache in foreground
 exec apache2-foreground
