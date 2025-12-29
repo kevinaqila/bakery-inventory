@@ -51,8 +51,22 @@ RUN cat > /etc/apache2/sites-available/000-default.conf <<EOF
 </VirtualHost>
 EOF
 
+# Create startup script
+RUN cat > /app-start.sh <<'SCRIPT'
+#!/bin/bash
+set -e
+
+# Run migrations
+php artisan migrate --force
+
+# Start Apache
+apache2-foreground
+SCRIPT
+
+RUN chmod +x /app-start.sh
+
 # Expose port
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start application
+CMD ["/app-start.sh"]
