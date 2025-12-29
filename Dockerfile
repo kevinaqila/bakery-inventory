@@ -38,19 +38,40 @@ RUN chmod -R 775 /var/www/html/database
 # Run composer post-install scripts
 RUN composer run-script post-autoload-dump --no-interaction || true
 
+# Remove default Apache configs that might conflict
+RUN rm -f /etc/apache2/sites-enabled/*.conf /etc/apache2/mods-enabled/mpm*.load
+
 # Configure Apache virtual host
-RUN cat > /etc/apache2/sites-available/000-default.conf <<EOF
+RUN cat > /etc/apache2/sites-available/laravel.conf <<'EOF'
 <VirtualHost *:80>
+    ServerName localhost
     DocumentRoot /var/www/html/public
+
     <Directory /var/www/html/public>
-        Options Indexes FollowSymLinks
+        Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride All
         Require all granted
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^ index.php [QSA,L]
+        </IfModule>
     </Directory>
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/html>
+        Require all denied
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
+
+# Enable the Laravel site
+RUN a2ensite laravel.conf
+RUN a2dissite 000-default.conf || true
 
 # Create startup script with proper error handling
 RUN cat > /app-start.sh <<'SCRIPT'
