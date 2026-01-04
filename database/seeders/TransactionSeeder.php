@@ -28,7 +28,17 @@ class TransactionSeeder extends Seeder
             $selectedProducts = $products->random(rand(2, 4));
             
             $totalAmount = 0;
-            $discountAmount = rand(0, 50000); 
+            
+            // Calculate total amount first
+            foreach ($selectedProducts as $product) {
+                $quantity = rand(1, 5);
+                $unitPrice = $product->selling_price;
+                $subtotal = $quantity * $unitPrice;
+                $totalAmount += $subtotal;
+            }
+
+            // Discount max 20% of total amount
+            $discountAmount = (int) ($totalAmount * 0.2 * (rand(0, 100) / 100));
             
             $transaction = Transaction::create([
                 'user_id' => $kasir->id,
@@ -45,7 +55,6 @@ class TransactionSeeder extends Seeder
                 $quantity = rand(1, 5);
                 $unitPrice = $product->selling_price;
                 $subtotal = $quantity * $unitPrice;
-                $totalAmount += $subtotal;
 
                 TransactionItem::create([
                     'transaction_id' => $transaction->id,
@@ -56,7 +65,7 @@ class TransactionSeeder extends Seeder
                 ]);
             }
 
-            $finalAmount = $totalAmount - $discountAmount;
+            $finalAmount = max(1, $totalAmount - $discountAmount);
             $paymentAmount = $finalAmount + rand(0, 50000);
             $changeAmount = $paymentAmount - $finalAmount;
 

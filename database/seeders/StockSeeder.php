@@ -23,13 +23,18 @@ class StockSeeder extends Seeder
 
         // Create initial stock for each product
         foreach ($products as $product) {
+            $initialQuantity = rand(50, 200);
+            
             Stock::create([
                 'product_id' => $product->id,
                 'type' => 'in',
-                'quantity' => rand(50, 200),
+                'quantity' => $initialQuantity,
                 'notes' => 'Stok awal produk ' . $product->name,
                 'user_id' => $karyawans->first()->id,
             ]);
+
+            // Update product stock_quantity
+            $product->increment('stock_quantity', $initialQuantity);
         }
 
         // Create 30 additional stock movements
@@ -52,6 +57,13 @@ class StockSeeder extends Seeder
                 'notes' => $notes,
                 'user_id' => $karyawan->id,
             ]);
+
+            // Update product stock_quantity based on type
+            if ($type === 'in') {
+                $product->increment('stock_quantity', $quantity);
+            } else {
+                $product->decrement('stock_quantity', $quantity);
+            }
         }
     }
 }

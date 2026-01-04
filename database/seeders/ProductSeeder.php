@@ -47,7 +47,7 @@ class ProductSeeder extends Seeder
             'unit' => 'pcs',
             'purchase_price' => 7000,
             'selling_price' => 12000,
-            'stock_quantity' => 25,
+            'stock_quantity' => 50,
             'reorder_level' => 5,
         ]);
 
