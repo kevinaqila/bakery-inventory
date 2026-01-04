@@ -14,32 +14,42 @@ class StockSeeder extends Seeder
      */
     public function run(): void
     {
-        $karyawan = User::where('email', 'karyawan@bakery.test')->first();
+        $karyawans = User::where('role', 'karyawan')->get();
         $products = Product::all();
 
-        if ($karyawan && $products->count() > 0) {
-            // Add sample stock data
+        if ($karyawans->isEmpty() || $products->isEmpty()) {
+            return;
+        }
+
+        // Create initial stock for each product
+        foreach ($products as $product) {
             Stock::create([
-                'product_id' => $products[0]->id,
+                'product_id' => $product->id,
                 'type' => 'in',
-                'quantity' => 50,
-                'notes' => 'Produksi pagi shift 1',
-                'user_id' => $karyawan->id,
+                'quantity' => rand(50, 200),
+                'notes' => 'Stok awal produk ' . $product->name,
+                'user_id' => $karyawans->first()->id,
             ]);
+        }
+
+        // Create 30 additional stock movements
+        for ($i = 0; $i < 30; $i++) {
+            $product = $products->random();
+            $karyawan = $karyawans->random();
+            $type = rand(0, 1) ? 'in' : 'out';
+            $quantity = rand(5, 50);
+
+            $notes = match ($type) {
+                'in' => "Produksi shift " . rand(1, 3) . " - Batch " . rand(1, 10),
+                'out' => "Pengurangan stok - Barang rusak/kadaluarsa",
+                default => "Penyesuaian stok",
+            };
 
             Stock::create([
-                'product_id' => $products[1]->id,
-                'type' => 'in',
-                'quantity' => 30,
-                'notes' => 'Produksi siang shift 2',
-                'user_id' => $karyawan->id,
-            ]);
-
-            Stock::create([
-                'product_id' => $products[2]->id,
-                'type' => 'in',
-                'quantity' => 25,
-                'notes' => 'Produksi malam shift 3',
+                'product_id' => $product->id,
+                'type' => $type,
+                'quantity' => $quantity,
+                'notes' => $notes,
                 'user_id' => $karyawan->id,
             ]);
         }
