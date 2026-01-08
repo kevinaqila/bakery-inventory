@@ -3,13 +3,15 @@ FROM php:8.2-apache
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsqlite3-dev \
+    libpq-dev \
+    libzip-dev \
     curl \
     git \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_sqlite
+RUN docker-php-ext-install pdo pdo_sqlite pdo_pgsql pdo_mysql zip
 
 # Disable all MPM modules first, then enable only mpm_prefork
 RUN a2dismod mpm_event mpm_worker || true
@@ -59,23 +61,33 @@ mkdir -p /var/www/html/storage/logs
 mkdir -p /var/www/html/storage/app/public
 chmod -R 777 /var/www/html/storage
 chmod -R 777 /var/www/html/bootstrap/cache
-mkdir -p /var/www/html/database
-chmod -R 777 /var/www/html/database
 
-# Create SQLite database file
-touch /var/www/html/database/database.sqlite
-chmod 666 /var/www/html/database/database.sqlite
+# If using SQLite, create database file
+if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
+    mkdir -p /var/www/html/database
+    chmod -R 777 /var/www/html/database
+    touch /var/www/html/database/database.sqlite
+    chmod 666 /var/www/html/database/database.sqlite
+fi
 
 # Create .env if it doesn't exist (use environment variables)
 if [ ! -f /var/www/html/.env ]; then
     cp /var/www/html/.env.example /var/www/html/.env || true
 fi
 
-# Run migrations
+# Run migrations (will only create new tables if they don't exist)
 php artisan migrate --force || true
 
-# Run seeders
-php artisan db:seed --force || true
+# Check if database is empty (users table has no records)
+USER_COUNT=$(php artisan tinker --execute="echo App\\Models\\User::count();" 2>/dev/null | tail -n 1 | tr -d '[:space:]' || echo "0")
+
+# Run seeders ONLY if database is empty
+if [ "$USER_COUNT" -eq "0" ]; then
+    echo "Database is empty, running seeders..."
+    php artisan db:seed --force || true
+else
+    echo "Database already has data, skipping seeders..."
+fi
 
 # Clear and cache config
 php artisan config:clear || true
