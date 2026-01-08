@@ -113,7 +113,10 @@ const formatDate = (dateString: string) => {
                                 Revenue
                             </th>
                             <th class="px-6 py-3 text-right font-semibold">
-                                Margin
+                                Profit (Margin)
+                            </th>
+                            <th class="px-6 py-3 text-right font-semibold">
+                                Margin %
                             </th>
                         </tr>
                     </thead>
@@ -137,25 +140,26 @@ const formatDate = (dateString: string) => {
                             <td class="px-6 py-4 text-right">
                                 <Badge
                                     :variant="
-                                        product.selling_price -
-                                            product.purchase_price >
-                                        0
+                                        product.total_margin > 0
+                                            ? 'default'
+                                            : 'destructive'
+                                    "
+                                >
+                                    {{ formatCurrency(product.total_margin) }}
+                                </Badge>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <Badge
+                                    :variant="
+                                        product.total_revenue > 0
                                             ? 'default'
                                             : 'destructive'
                                     "
                                 >
                                     {{
-                                        formatCurrency(
-                                            product.selling_price -
-                                                product.purchase_price,
-                                        )
-                                    }}
-                                    /
-                                    {{
                                         Math.round(
-                                            ((product.selling_price -
-                                                product.purchase_price) /
-                                                product.selling_price) *
+                                            (product.total_margin /
+                                                product.total_revenue) *
                                                 100,
                                         )
                                     }}%

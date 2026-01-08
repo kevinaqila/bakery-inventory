@@ -45,7 +45,8 @@ class DashboardController extends Controller
             products.purchase_price,
             products.selling_price,
             SUM(transaction_items.quantity) as total_qty,
-            SUM(transaction_items.subtotal) as total_revenue
+            SUM(transaction_items.subtotal) as total_revenue,
+            SUM(transaction_items.quantity * (products.selling_price - products.purchase_price)) as total_margin
         ')
             ->join('products', 'products.id', '=', 'transaction_items.product_id')
             ->groupBy('product_id', 'products.name', 'products.purchase_price', 'products.selling_price')
