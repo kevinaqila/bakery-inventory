@@ -61,7 +61,6 @@ class ProductController extends Controller
             'purchase_price' => 'required|integer|min:0',
             'selling_price' => 'required|integer|min:0',
             'stock_quantity' => 'required|integer|min:0',
-            'reorder_level' => 'required|integer|min:0',
         ]);
 
         Product::create($validated);
@@ -98,7 +97,6 @@ class ProductController extends Controller
             'purchase_price' => 'required|integer|min:0',
             'selling_price' => 'required|integer|min:0',
             'stock_quantity' => 'required|integer|min:0',
-            'reorder_level' => 'required|integer|min:0',
         ]);
 
         $product->update($validated);
