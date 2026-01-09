@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Stock;
+use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -75,6 +77,12 @@ class CategoryController extends Controller
             abort(403, 'Hanya admin yang bisa hapus kategori');
         }
 
+        $productIds = $category->products()->pluck('id');
+        
+        Stock::whereIn('product_id', $productIds)->delete();
+        
+        TransactionItem::whereIn('product_id', $productIds)->delete();
+        
         $category->products()->delete();
         
         $category->delete();

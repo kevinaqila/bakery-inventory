@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Inventory;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Stock;
+use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -114,6 +116,13 @@ class ProductController extends Controller
             abort(403, 'Hanya admin yang bisa hapus produk');
         }
 
+        // Hapus stocks yang refer ke product ini
+        Stock::where('product_id', $product->id)->delete();
+        
+        // Hapus transaction_items yang refer ke product ini
+        TransactionItem::where('product_id', $product->id)->delete();
+        
+        // Baru hapus product
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
