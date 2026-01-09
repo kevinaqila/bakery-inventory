@@ -21,7 +21,6 @@ return new class extends Migration
             $table->unsignedBigInteger('purchase_price');            
             $table->unsignedBigInteger('selling_price');
             $table->integer('stock_quantity')->default('0');
-            $table->integer('reorder_level')->default('10');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
