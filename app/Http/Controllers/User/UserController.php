@@ -55,6 +55,7 @@ class UserController extends Controller
             'role' => 'required|in:admin,kasir,karyawan',
         ]);
 
+        // Kosongkan jika password sama
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
