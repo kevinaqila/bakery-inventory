@@ -22,7 +22,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Produk', href: '/products' },
     { title: 'Buat Produk', href: '#' },
 ];
-
 const form = useForm({
     name: '',
     sku: '',
@@ -32,6 +31,7 @@ const form = useForm({
     purchase_price: 0,
     selling_price: 0,
     stock_quantity: 0,
+    is_active: true,
 });
 
 const handleSubmit = () => {
@@ -177,6 +177,25 @@ const handleSubmit = () => {
                             placeholder="0"
                         />
                         <InputError :message="form.errors.stock_quantity" />
+                    </div>
+
+                    <!-- Status Active -->
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <input
+                                id="is_active"
+                                v-model="form.is_active"
+                                type="checkbox"
+                                class="rounded border-gray-300"
+                            />
+                            <Label
+                                for="is_active"
+                                class="cursor-pointer font-semibold"
+                            >
+                                Produk Aktif
+                            </Label>
+                        </div>
+                        <InputError :message="form.errors.is_active" />
                     </div>
 
                     <!-- Buttons -->

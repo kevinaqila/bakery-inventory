@@ -61,6 +61,7 @@ class ProductController extends Controller
             'purchase_price' => 'required|integer|min:0',
             'selling_price' => 'required|integer|min:0',
             'stock_quantity' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
         ]);
 
         Product::create($validated);
@@ -97,6 +98,7 @@ class ProductController extends Controller
             'purchase_price' => 'required|integer|min:0',
             'selling_price' => 'required|integer|min:0',
             'stock_quantity' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
         ]);
 
         $product->update($validated);

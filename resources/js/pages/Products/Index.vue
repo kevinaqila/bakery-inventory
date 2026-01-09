@@ -29,6 +29,7 @@ interface Product {
     purchase_price: number;
     selling_price: number;
     stock_quantity: number;
+    is_active: boolean;
     created_at: string;
     updated_at: string;
 }
@@ -235,6 +236,11 @@ const getRelativeUrl = (fullUrl: string | null): string => {
                                     Stok
                                 </th>
                                 <th
+                                    class="px-6 py-3 text-center text-sm font-semibold"
+                                >
+                                    Status
+                                </th>
+                                <th
                                     v-if="isAdmin"
                                     class="px-6 py-3 text-right text-sm font-semibold"
                                 >
@@ -316,6 +322,21 @@ const getRelativeUrl = (fullUrl: string | null): string => {
                                 <td class="px-6 py-3 text-right font-semibold">
                                     {{ product.stock_quantity }}
                                     {{ product.unit }}
+                                </td>
+                                <td class="px-6 py-3 text-center">
+                                    <Badge
+                                        :variant="
+                                            product.is_active
+                                                ? 'default'
+                                                : 'destructive'
+                                        "
+                                    >
+                                        {{
+                                            product.is_active
+                                                ? 'Aktif'
+                                                : 'Nonaktif'
+                                        }}
+                                    </Badge>
                                 </td>
                                 <td
                                     v-if="isAdmin"

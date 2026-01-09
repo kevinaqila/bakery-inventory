@@ -49,6 +49,15 @@ class TransactionController extends Controller
         foreach ($validated['items'] as $item) {
             $product = Product::findOrFail((int) $item['product_id']);
             
+            // Check apakah produk aktif
+            if (!$product->is_active) {
+                return redirect()->back()
+                    ->withErrors([
+                        'product_error' => "Produk {$product->name} tidak aktif. Hubungi admin untuk mengaktifkan."
+                    ])
+                    ->withInput();
+            }
+            
             if ($product->stock_quantity < $item['quantity']) {
                 return redirect()->back()
                     ->withErrors([
