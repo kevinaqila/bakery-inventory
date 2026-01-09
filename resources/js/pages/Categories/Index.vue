@@ -3,7 +3,8 @@ import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const page = usePage();
 const isAdmin = page.props.auth.user.role === 'admin';
@@ -16,6 +17,7 @@ interface Category {
     is_active: boolean;
     created_at: string;
     updated_at: string;
+    products_count?: number;
 }
 
 defineProps<{
@@ -32,6 +34,31 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/categories',
     },
 ];
+
+// Confirmation modal state
+const showConfirmation = ref(false);
+const selectedCategory = ref<Category | null>(null);
+
+const openDeleteConfirmation = (category: Category) => {
+    selectedCategory.value = category;
+    showConfirmation.value = true;
+};
+
+const confirmDelete = () => {
+    if (selectedCategory.value) {
+        router.delete(`/categories/${selectedCategory.value.id}`, {
+            onSuccess: () => {
+                showConfirmation.value = false;
+                selectedCategory.value = null;
+            },
+        });
+    }
+};
+
+const cancelDelete = () => {
+    showConfirmation.value = false;
+    selectedCategory.value = null;
+};
 </script>
 
 <template>
@@ -56,7 +83,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </Link>
             </div>
 
-            <!-- Table -->
             <!-- Table -->
             <div class="rounded-lg border bg-white">
                 <div class="overflow-x-auto">
@@ -107,24 +133,59 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             Edit
                                         </Button>
                                     </Link>
-                                    <Link
+                                    <Button
                                         v-if="isAdmin"
-                                        :href="`/categories/${category.id}`"
-                                        method="delete"
-                                        as="button"
+                                        variant="destructive"
+                                        size="sm"
+                                        @click="
+                                            openDeleteConfirmation(category)
+                                        "
                                     >
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            type="button"
-                                        >
-                                            Hapus
-                                        </Button>
-                                    </Link>
+                                        Hapus
+                                    </Button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div
+            v-if="showConfirmation"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        >
+            <div class="w-full max-w-sm rounded-lg bg-white p-7 shadow-lg">
+                <h3 class="mb-2 text-lg font-bold text-red-600">
+                    Hapus Kategori?
+                </h3>
+                <p class="mb-4 text-sm text-gray-600">
+                    Apakah Anda yakin ingin menghapus kategori
+                    <strong>{{ selectedCategory?.name }}</strong
+                    >?
+                </p>
+                <p
+                    class="mb-6 rounded bg-yellow-50 p-3 text-sm text-yellow-700"
+                >
+                    Semua produk dalam kategori ini akan dihapus juga!
+                </p>
+
+                <div class="flex justify-end gap-3">
+                    <Button
+                        variant="outline"
+                        @click="cancelDelete"
+                        class="px-4 py-2"
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        @click="confirmDelete"
+                        class="px-4 py-2"
+                    >
+                        Ya, Hapus
+                    </Button>
                 </div>
             </div>
         </div>

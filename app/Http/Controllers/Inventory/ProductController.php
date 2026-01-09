@@ -15,12 +15,14 @@ class ProductController extends Controller
     {
         $query = Product::with('category');
 
+        // Search 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where('name', 'ilike', "%{$search}%")
                   ->orWhere('sku', 'ilike', "%{$search}%");
         }
 
+        // Filter Category
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }

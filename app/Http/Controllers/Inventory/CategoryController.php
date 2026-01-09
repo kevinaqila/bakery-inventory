@@ -75,6 +75,8 @@ class CategoryController extends Controller
             abort(403, 'Hanya admin yang bisa hapus kategori');
         }
 
+        $category->products()->delete();
+        
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');

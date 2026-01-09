@@ -53,11 +53,13 @@ class TransactionController extends Controller
             if (!$product->is_active) {
                 return redirect()->back()
                     ->withErrors([
-                        'product_error' => "Produk {$product->name} tidak aktif. Hubungi admin untuk mengaktifkan."
+                        'product_error' => "Produk {$product->name} tidak aktif."
                     ])
                     ->withInput();
             }
-            
+
+
+            // Check apakah produk cukup
             if ($product->stock_quantity < $item['quantity']) {
                 return redirect()->back()
                     ->withErrors([
@@ -69,6 +71,7 @@ class TransactionController extends Controller
 
         $validated['user_id'] = Auth::id();
         
+        // Simpan data dalam items
         $items = $validated['items'];
         unset($validated['items']);
 
@@ -83,6 +86,7 @@ class TransactionController extends Controller
                 'subtotal' => $item['subtotal'],
             ]);
 
+            // Update Stock product
             $product = Product::findOrFail((int) $item['product_id']);
             $product->stock_quantity -= $item['quantity'];
             $product->save();
