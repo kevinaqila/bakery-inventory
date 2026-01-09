@@ -32,13 +32,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP dependencies
 RUN composer install --no-dev --no-interaction --no-scripts
 
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+# Install Node.js 20 and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 
-# Install npm dependencies and build Vue frontend
+# Install npm dependencies (INCLUDING dev dependencies for build)
 COPY package.json package-lock.json ./
-RUN npm install --omit=dev
+RUN npm ci
+
+# Build Vue frontend
 RUN npm run build
+
+# Remove node_modules to save space (build files already in public/build)
+RUN rm -rf node_modules
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
