@@ -49,6 +49,9 @@ class DashboardController extends Controller
             SUM(transaction_items.quantity * (products.selling_price - products.purchase_price)) as total_margin
         ')
             ->join('products', 'products.id', '=', 'transaction_items.product_id')
+            ->join('transactions', 'transactions.id', '=', 'transaction_items.transaction_id')
+            ->whereMonth('transactions.created_at', now()->month)
+            ->whereYear('transactions.created_at', now()->year)
             ->groupBy('product_id', 'products.name', 'products.purchase_price', 'products.selling_price')
             ->orderByDesc('total_qty')
             ->limit(5)
