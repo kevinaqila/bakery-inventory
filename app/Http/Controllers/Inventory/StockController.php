@@ -37,6 +37,10 @@ class StockController extends Controller
 
         Stock::create($validated);
 
+        $product = Product::findOrFail($validated['product_id']);
+        $product->stock_quantity += $validated['quantity'];
+        $product->save();
+
         return redirect()->route('stocks.index')->with('success', 'Laporan Stok berhasil dibuat.');
     }
 }
