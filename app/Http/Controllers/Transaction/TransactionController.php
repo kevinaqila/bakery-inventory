@@ -45,6 +45,19 @@ class TransactionController extends Controller
             'items.*.subtotal' => 'required|integer|min:0',
         ]);
 
+        // Validasi stock sebelum proses transaksi
+        foreach ($validated['items'] as $item) {
+            $product = Product::findOrFail((int) $item['product_id']);
+            
+            if ($product->stock_quantity < $item['quantity']) {
+                return redirect()->back()
+                    ->withErrors([
+                        'stock_error' => "Stok {$product->name} tidak cukup. Tersedia {$product->stock_quantity} unit"
+                    ])
+                    ->withInput();
+            }
+        }
+
         $validated['user_id'] = Auth::id();
         
         $items = $validated['items'];
