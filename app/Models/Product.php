@@ -15,7 +15,6 @@ class Product extends Model
         'purchase_price',
         'selling_price',
         'stock_quantity',
-        'reorder_level',
         'is_active'
     ];
 

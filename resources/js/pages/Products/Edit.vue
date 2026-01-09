@@ -184,7 +184,7 @@ const handleSubmit = () => {
                     <div class="grid grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <Label for="stock_quantity" class="font-semibold">
-                                Stok Awal
+                                Stok
                             </Label>
                             <Input
                                 id="stock_quantity"
@@ -216,9 +216,7 @@ const handleSubmit = () => {
                             class="bg-orange-500 hover:bg-orange-600"
                             :disabled="form.processing"
                         >
-                            <span v-if="!form.processing"
-                                >Update Produk</span
-                            >
+                            <span v-if="!form.processing">Update Produk</span>
                             <span v-else>Menyimpan...</span>
                         </Button>
                         <Link href="/products">

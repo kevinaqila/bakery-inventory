@@ -23,7 +23,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 6000,
             'selling_price' => 10000,
             'stock_quantity' => 15,
-            'reorder_level' => 5,
         ]);
 
         Product::create([
@@ -35,7 +34,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 5000,
             'selling_price' => 8000,
             'stock_quantity' => 20,
-            'reorder_level' => 5,
         ]);
 
         // Roti Manis
@@ -48,7 +46,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 7000,
             'selling_price' => 12000,
             'stock_quantity' => 50,
-            'reorder_level' => 5,
         ]);
 
         Product::create([
@@ -60,7 +57,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 8000,
             'selling_price' => 13000,
             'stock_quantity' => 18,
-            'reorder_level' => 5,
         ]);
 
         // Roti Tawar
@@ -73,7 +69,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 15000,
             'selling_price' => 22000,
             'stock_quantity' => 10,
-            'reorder_level' => 3,
         ]);
 
         Product::create([
@@ -85,7 +80,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 18000,
             'selling_price' => 25000,
             'stock_quantity' => 8,
-            'reorder_level' => 3,
         ]);
 
         // Kue Kering
@@ -98,7 +92,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 20000,
             'selling_price' => 30000,
             'stock_quantity' => 12,
-            'reorder_level' => 5,
         ]);
 
         Product::create([
@@ -110,7 +103,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 25000,
             'selling_price' => 35000,
             'stock_quantity' => 15,
-            'reorder_level' => 5,
         ]);
 
         // Kue Basah
@@ -123,7 +115,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 10000,
             'selling_price' => 15000,
             'stock_quantity' => 30,
-            'reorder_level' => 10,
         ]);
 
         Product::create([
@@ -135,7 +126,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 12000,
             'selling_price' => 18000,
             'stock_quantity' => 25,
-            'reorder_level' => 10,
         ]);
 
         // Pastry
@@ -148,7 +138,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 15000,
             'selling_price' => 25000,
             'stock_quantity' => 20,
-            'reorder_level' => 5,
         ]);
 
         Product::create([
@@ -160,7 +149,6 @@ class ProductSeeder extends Seeder
             'purchase_price' => 18000,
             'selling_price' => 28000,
             'stock_quantity' => 15,
-            'reorder_level' => 5,
         ]);
     }
 }
