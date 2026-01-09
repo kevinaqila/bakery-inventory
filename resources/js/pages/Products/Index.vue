@@ -29,7 +29,6 @@ interface Product {
     purchase_price: number;
     selling_price: number;
     stock_quantity: number;
-    reorder_level: number;
     created_at: string;
     updated_at: string;
 }

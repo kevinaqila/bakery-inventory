@@ -23,7 +23,6 @@ interface Product {
     purchase_price: number;
     selling_price: number;
     stock_quantity: number;
-    reorder_level: number;
 }
 
 const props = defineProps<{
@@ -46,7 +45,6 @@ const form = useForm({
     purchase_price: props.product.purchase_price,
     selling_price: props.product.selling_price,
     stock_quantity: props.product.stock_quantity,
-    reorder_level: props.product.reorder_level,
 });
 
 const handleSubmit = () => {
@@ -181,32 +179,17 @@ const handleSubmit = () => {
                     </div>
 
                     <!-- Stock Info -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <Label for="stock_quantity" class="font-semibold">
-                                Stok
-                            </Label>
-                            <Input
-                                id="stock_quantity"
-                                v-model.number="form.stock_quantity"
-                                type="number"
-                                placeholder="0"
-                            />
-                            <InputError :message="form.errors.stock_quantity" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="reorder_level" class="font-semibold">
-                                Reorder Level
-                            </Label>
-                            <Input
-                                id="reorder_level"
-                                v-model.number="form.reorder_level"
-                                type="number"
-                                placeholder="0"
-                            />
-                            <InputError :message="form.errors.reorder_level" />
-                        </div>
+                    <div class="space-y-2">
+                        <Label for="stock_quantity" class="font-semibold">
+                            Stok
+                        </Label>
+                        <Input
+                            id="stock_quantity"
+                            v-model.number="form.stock_quantity"
+                            type="number"
+                            placeholder="0"
+                        />
+                        <InputError :message="form.errors.stock_quantity" />
                     </div>
 
                     <!-- Buttons -->

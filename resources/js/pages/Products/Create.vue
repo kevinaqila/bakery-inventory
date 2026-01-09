@@ -32,7 +32,6 @@ const form = useForm({
     purchase_price: 0,
     selling_price: 0,
     stock_quantity: 0,
-    reorder_level: 0,
 });
 
 const handleSubmit = () => {
@@ -167,32 +166,17 @@ const handleSubmit = () => {
                     </div>
 
                     <!-- Stock Info -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <Label for="stock_quantity" class="font-semibold">
-                                Stok Awal
-                            </Label>
-                            <Input
-                                id="stock_quantity"
-                                v-model.number="form.stock_quantity"
-                                type="number"
-                                placeholder="0"
-                            />
-                            <InputError :message="form.errors.stock_quantity" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="reorder_level" class="font-semibold">
-                                Reorder Level
-                            </Label>
-                            <Input
-                                id="reorder_level"
-                                v-model.number="form.reorder_level"
-                                type="number"
-                                placeholder="0"
-                            />
-                            <InputError :message="form.errors.reorder_level" />
-                        </div>
+                    <div class="space-y-2">
+                        <Label for="stock_quantity" class="font-semibold">
+                            Stok Awal
+                        </Label>
+                        <Input
+                            id="stock_quantity"
+                            v-model.number="form.stock_quantity"
+                            type="number"
+                            placeholder="0"
+                        />
+                        <InputError :message="form.errors.stock_quantity" />
                     </div>
 
                     <!-- Buttons -->
